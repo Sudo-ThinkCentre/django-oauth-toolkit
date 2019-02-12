@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django.apps import apps
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urlrs import reverse
 from django.db import models, transaction
 from django.utils import timezone
 
