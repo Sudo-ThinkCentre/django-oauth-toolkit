@@ -37,7 +37,7 @@ setup(
         "Framework :: Django :: 2.1",
     ],
     keywords='django oauth oauth2 oauthlib',
-    author="Federico Frenguelli, Massimiliano Pippi",
+    author="Federico Frenguelli, Massimiliano Pippi, Alan Viars",
     author_email='synasius@gmail.com, mpippi@gmail.com',
     url='https://github.com/TransparentHealth/django-oauth-toolkit',
     license='BSD',
