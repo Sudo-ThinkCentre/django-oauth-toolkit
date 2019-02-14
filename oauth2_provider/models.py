@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django.apps import apps
 from django.conf import settings
-from django.urlrs import reverse
+from django.urls import reverse
 from django.db import models, transaction
 from django.utils import timezone
 
@@ -60,7 +60,7 @@ class AbstractApplication(models.Model):
     client_id = models.CharField(max_length=100, unique=True,
                                  default=generate_client_id, db_index=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="%(app_label)s_%(class)s",
-                             null=True, blank=True)
+                             null=True, blank=True, on_delete=models.CASCADE)
 
     help_text = _("Allowed URIs list, space separated")
     redirect_uris = models.TextField(help_text=help_text,
@@ -148,9 +148,9 @@ class Grant(models.Model):
     * :attr:`redirect_uri` Self explained
     * :attr:`scope` Required scopes, optional
     """
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     code = models.CharField(max_length=255, db_index=True)  # code comes from oauthlib
-    application = models.ForeignKey(oauth2_settings.APPLICATION_MODEL)
+    application = models.ForeignKey(oauth2_settings.APPLICATION_MODEL, on_delete=models.CASCADE)
     expires = models.DateTimeField()
     redirect_uri = models.CharField(max_length=255)
     scope = models.TextField(blank=True)
@@ -185,9 +185,9 @@ class AccessToken(models.Model):
     * :attr:`expires` Date and time of token expiration, in DateTime format
     * :attr:`scope` Allowed scopes
     """
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE)
     token = models.CharField(max_length=255, db_index=True)
-    application = models.ForeignKey(oauth2_settings.APPLICATION_MODEL)
+    application = models.ForeignKey(oauth2_settings.APPLICATION_MODEL, on_delete=models.CASCADE)
     expires = models.DateTimeField()
     scope = models.TextField(blank=True)
 
@@ -254,10 +254,10 @@ class RefreshToken(models.Model):
     * :attr:`access_token` AccessToken instance this refresh token is
                            bounded to
     """
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     token = models.CharField(max_length=255, db_index=True)
-    application = models.ForeignKey(oauth2_settings.APPLICATION_MODEL)
-    access_token = models.OneToOneField(AccessToken,
+    application = models.ForeignKey(oauth2_settings.APPLICATION_MODEL, on_delete=models.CASCADE)
+    access_token = models.OneToOneField(AccessToken, on_delete=models.SET_NULL, blank=True, null=True,
                                         related_name='refresh_token')
 
     def revoke(self):
